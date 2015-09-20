@@ -8,6 +8,7 @@ import (
 type Config struct {
     Local struct {
         ImportPrefix string
+        SourcePrefix string
     }
     Dependencies []string
 }
