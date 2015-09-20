@@ -6,7 +6,10 @@ import (
 )
 
 type Config struct {
-    LocalImportPrefix string
+    Local struct {
+        ImportPrefix string
+    }
+    Dependencies []string
 }
 
 func NewConfig() *Config {
