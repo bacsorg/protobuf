@@ -14,14 +14,18 @@ var protoc = flag.String("protoc", "protoc", "protoc location")
 var protoc_gen_go = flag.String(
     "protoc-gen-go", "protoc-gen-go", "protoc-gen-go location")
 
-func Generate(cfg *config.Config) (err error) {
-    protoc_gen_go_path, err := exec.LookPath(*protoc_gen_go)
-    if err != nil {
-        return
-    }
+func Generate() error {
     current_project, err := os.Getwd()
     if err != nil {
-        return
+        return err
+    }
+    cfg, err := config.ParseProject(current_project)
+    if err != nil {
+        return err
+    }
+    protoc_gen_go_path, err := exec.LookPath(*protoc_gen_go)
+    if err != nil {
+        return err
     }
     current_root := path.Join(current_project, cfg.Local.SourcePrefix)
     protoc_path_args := []string{
@@ -31,8 +35,8 @@ func Generate(cfg *config.Config) (err error) {
     protoc_go_out_param := "--go_out="
     // TODO add Mimport/file.proto=prefix/import/file.proto mappings
     protoc_go_out_param = protoc_go_out_param + "."
-    err = walkProtoPackages(current_root,
-        func(root string, prefix string, protos []string) (err error) {
+    return walkProtoPackages(current_root,
+        func(root string, prefix string, protos []string) error {
             protoc_args := append([]string{
                 protoc_gen_go_param,
                 protoc_go_out_param,
@@ -44,9 +48,8 @@ func Generate(cfg *config.Config) (err error) {
             cmd := exec.Command(*protoc, protoc_args...)
             output, err := cmd.CombinedOutput()
             if err != nil {
-                err = fmt.Errorf("protoc %v: %s", err, output)
+                return fmt.Errorf("protoc %v: %s", err, output)
             }
-            return
+            return nil
         })
-    return
 }

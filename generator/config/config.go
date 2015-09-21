@@ -2,8 +2,13 @@ package config
 
 import (
     "encoding/json"
+    "flag"
     "os"
+    "path"
 )
+
+var ConfigFileName = flag.String("bacs-proto-config", "BacsProtobuf.json",
+    "Name of configuration file")
 
 type Config struct {
     Local struct {
@@ -17,8 +22,8 @@ func NewConfig() *Config {
     return &Config{}
 }
 
-func ParseConfig(path string) (cfg *Config, err error) {
-    file, err := os.Open(path)
+func ParseConfig(config string) (cfg *Config, err error) {
+    file, err := os.Open(config)
     if err != nil {
         return
     }
@@ -30,4 +35,8 @@ func ParseConfig(path string) (cfg *Config, err error) {
         cfg = nil
     }
     return
+}
+
+func ParseProject(project string) (*Config, error) {
+    return ParseConfig(path.Join(project, *ConfigFileName))
 }
