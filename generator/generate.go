@@ -23,6 +23,27 @@ func Generate() error {
     if err != nil {
         return err
     }
+
+    import_paths := make([]string, 0, 128)
+    import_map := make(map[string]string)
+    err = walkProtoProjects(cfg.Local.ImportPrefix,
+        func(root string, import_path string, cfg *config.Config) error {
+            local_root := path.Join(root, cfg.Local.SourcePrefix)
+            import_paths = append(import_paths, local_root)
+            return walkProtoPackages(local_root,
+                func(proto_root string, prefix string, protos []string) error {
+                    for _, proto := range protos {
+                        full_proto := path.Join(prefix, proto)
+                        full_import := path.Join(import_path, prefix)
+                        import_map[full_proto] = full_import
+                    }
+                    return nil
+                })
+        })
+    if err != nil {
+        return err
+    }
+
     protoc_gen_go_path, err := exec.LookPath(*protoc_gen_go)
     if err != nil {
         return err
@@ -31,9 +52,25 @@ func Generate() error {
     protoc_path_args := []string{
         "--proto_path=" + current_root,
     }
+    for _, import_path := range import_paths {
+        protoc_path_args = append(protoc_path_args, "--proto_path="+import_path)
+    }
     protoc_gen_go_param := "--plugin=protoc-gen-go=" + protoc_gen_go_path
     protoc_go_out_param := "--go_out="
-    // TODO add Mimport/file.proto=prefix/import/file.proto mappings
+    first_import := true
+    for key, value := range import_map {
+        if !first_import {
+            protoc_go_out_param += ","
+        }
+        first_import = false
+        protoc_go_out_param += "M"
+        protoc_go_out_param += key
+        protoc_go_out_param += "="
+        protoc_go_out_param += value
+    }
+    if !first_import {
+        protoc_go_out_param += ":"
+    }
     protoc_go_out_param = protoc_go_out_param + "."
     return walkProtoPackages(current_root,
         func(root string, prefix string, protos []string) error {
