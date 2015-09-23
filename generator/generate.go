@@ -28,13 +28,13 @@ func Generate() error {
     import_map := make(map[string]string)
     err = walkProtoProjects(
         func(root string, import_path string, cfg *config.Config) error {
-            local_root := path.Join(root, cfg.Local.SourcePrefix)
-            import_paths = append(import_paths, local_root)
-            return walkProtoPackages(local_root,
+            local_proto_root := path.Join(root, cfg.Local.ProtoPrefix)
+            import_paths = append(import_paths, local_proto_root)
+            return walkProtoPackages(local_proto_root,
                 func(proto_root string, prefix string, protos []string) error {
                     for _, proto := range protos {
                         full_proto := path.Join(prefix, proto)
-                        full_import := path.Join(import_path, prefix)
+                        full_import := path.Join(import_path, cfg.Local.GoPrefix, prefix)
                         import_map[full_proto] = full_import
                     }
                     return nil
@@ -48,9 +48,14 @@ func Generate() error {
     if err != nil {
         return err
     }
-    current_root := path.Join(current_project, cfg.Local.SourcePrefix)
+    proto_root := path.Join(current_project, cfg.Local.ProtoPrefix)
+    go_root := path.Join(current_project, cfg.Local.GoPrefix)
+    err = os.MkdirAll(go_root, 0777)
+    if err != nil {
+        return err
+    }
     protoc_path_args := []string{
-        "--proto_path=" + current_root,
+        "--proto_path=" + proto_root,
     }
     for _, import_path := range import_paths {
         protoc_path_args = append(protoc_path_args, "--proto_path="+import_path)
@@ -71,8 +76,8 @@ func Generate() error {
     if !first_import {
         protoc_go_out_param += ":"
     }
-    protoc_go_out_param = protoc_go_out_param + "."
-    return walkProtoPackages(current_root,
+    protoc_go_out_param = protoc_go_out_param + go_root
+    return walkProtoPackages(proto_root,
         func(root string, prefix string, protos []string) error {
             protoc_args := append([]string{
                 protoc_gen_go_param,

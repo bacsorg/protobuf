@@ -12,7 +12,8 @@ var ConfigFileName = flag.String("bacs-proto-config", "BacsProtobuf.json",
 
 type Config struct {
     Local struct {
-        SourcePrefix string
+        ProtoPrefix string
+        GoPrefix    string
     }
     Dependencies []string
 }
