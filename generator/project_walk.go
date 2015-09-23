@@ -49,8 +49,12 @@ func walkProtoProjectsCustom(
     return walkFn(root, import_path, cfg)
 }
 
-func walkProtoProjects(import_path string, walkFn walkProjectFunc) error {
+func walkProtoProjects(walkFn walkProjectFunc) error {
     root, err := os.Getwd()
+    if err != nil {
+        return err
+    }
+    import_path, err := findImportPathForProject(root)
     if err != nil {
         return err
     }

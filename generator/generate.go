@@ -26,7 +26,7 @@ func Generate() error {
 
     import_paths := make([]string, 0, 128)
     import_map := make(map[string]string)
-    err = walkProtoProjects(cfg.Local.ImportPrefix,
+    err = walkProtoProjects(
         func(root string, import_path string, cfg *config.Config) error {
             local_root := path.Join(root, cfg.Local.SourcePrefix)
             import_paths = append(import_paths, local_root)
