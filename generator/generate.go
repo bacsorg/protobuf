@@ -13,6 +13,7 @@ import (
 var protoc = flag.String("protoc", "protoc", "protoc location")
 var protoc_gen_go = flag.String(
     "protoc-gen-go", "protoc-gen-go", "protoc-gen-go location")
+var protoc_plugin_grpc = flag.Bool("protoc-plugin-grpc", true, "Enable gRPC")
 
 func Generate() error {
     current_project, err := os.Getwd()
@@ -61,27 +62,19 @@ func Generate() error {
         protoc_path_args = append(protoc_path_args, "--proto_path="+import_path)
     }
     protoc_gen_go_param := "--plugin=protoc-gen-go=" + protoc_gen_go_path
-    protoc_go_out_param := "--go_out="
-    first_import := true
+    protoc_go_out_param := newProtocGoOutParam()
+    if *protoc_plugin_grpc {
+        protoc_go_out_param.addParam("plugins=grpc")
+    }
     for key, value := range import_map {
-        if !first_import {
-            protoc_go_out_param += ","
-        }
-        first_import = false
-        protoc_go_out_param += "M"
-        protoc_go_out_param += key
-        protoc_go_out_param += "="
-        protoc_go_out_param += value
+        protoc_go_out_param.addParam("M" + key + "=" + value)
     }
-    if !first_import {
-        protoc_go_out_param += ":"
-    }
-    protoc_go_out_param = protoc_go_out_param + go_root
+    protoc_go_out_param.setPath(go_root)
     return walkProtoPackages(proto_root,
         func(root string, prefix string, protos []string) error {
             protoc_args := append([]string{
                 protoc_gen_go_param,
-                protoc_go_out_param,
+                protoc_go_out_param.String(),
             }, protoc_path_args...)
             for _, proto := range protos {
                 protoc_args = append(protoc_args, path.Join(root, prefix, proto))
