@@ -32,7 +32,7 @@ func findProjectInPath(import_path string) (string, error) {
         }
         return project_path, nil
     }
-    return "", fmt.Errorf("Unable to find \"%s\" in GOPATH", import_path)
+    return "", fmt.Errorf("unable to find \"%s\" in GOPATH", import_path)
 }
 
 func findImportPathForProject(project_path string) (string, error) {
@@ -47,5 +47,5 @@ func findImportPathForProject(project_path string) (string, error) {
             return rel, nil
         }
     }
-    return "", fmt.Errorf("Unable to find import path for project \"%s\"", project_path)
+    return "", fmt.Errorf("unable to find import path for project \"%s\"", project_path)
 }
