@@ -32,10 +32,10 @@ func Generate() error {
             local_proto_root := path.Join(root, cfg.Local.ProtoPrefix)
             import_paths = append(import_paths, local_proto_root)
             return walkProtoPackages(local_proto_root,
-                func(proto_root string, prefix string, protos []string) error {
+                func(proto_root, prefix string, protos []string) error {
+                    full_import := path.Join(import_path, cfg.Local.GoPrefix, prefix)
                     for _, proto := range protos {
                         full_proto := path.Join(prefix, proto)
-                        full_import := path.Join(import_path, cfg.Local.GoPrefix, prefix)
                         import_map[full_proto] = full_import
                     }
                     return nil

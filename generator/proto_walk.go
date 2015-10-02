@@ -7,9 +7,9 @@ import (
     "strings"
 )
 
-type walkProtoFunc func(root string, prefix string, protos []string) error
+type walkProtoFunc func(root, prefix string, protos []string) error
 
-func walkProtoPackagesCustom(root string, prefix string, walkFn walkProtoFunc) error {
+func walkProtoPackagesCustom(root, prefix string, walkFn walkProtoFunc) error {
     protos := make([]string, 0, 64)
     files, err := ioutil.ReadDir(path.Join(root, prefix))
     if err != nil {

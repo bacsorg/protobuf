@@ -6,7 +6,7 @@ import (
     "os"
 )
 
-type walkProjectFunc func(root string, import_path string, cfg *config.Config) error
+type walkProjectFunc func(root, import_path string, cfg *config.Config) error
 
 const (
     not_done = iota
@@ -15,7 +15,7 @@ const (
 )
 
 func walkProtoProjectsCustom(
-    root string, import_path string, state map[string]int,
+    root, import_path string, state map[string]int,
     walkFn walkProjectFunc) error {
 
     if s, ok := state[import_path]; ok {
