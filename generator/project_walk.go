@@ -1,6 +1,7 @@
 package generator
 
 import (
+    "flag"
     "fmt"
     "github.com/bacsorg/protobuf/generator/config"
     "os"
@@ -13,6 +14,11 @@ const (
     doing   = iota
     done    = iota
 )
+
+var bootstrapProject = flag.String(
+    "bootstrap-project", "github.com/bacsorg/protobuf", "Project containing base types")
+var dependOnBootstrapProject = flag.Bool(
+    "depend-on-bootstrap-project", true, "Implicitly depend on bootstrap project")
 
 func walkProtoProjectsCustom(
     root, importPath string, state map[string]int, walkFn walkProjectFunc) error {
@@ -58,5 +64,15 @@ func walkProtoProjectsFromCurrent(walkFn walkProjectFunc) error {
         return err
     }
     state := make(map[string]int)
+    if *dependOnBootstrapProject && importPath != *bootstrapProject {
+        bootstrapRoot, err := findProjectInPath(*bootstrapProject)
+        if err != nil {
+            return err
+        }
+        err = walkProtoProjectsCustom(bootstrapRoot, *bootstrapProject, state, walkFn)
+        if err != nil {
+            return err
+        }
+    }
     return walkProtoProjectsCustom(root, importPath, state, walkFn)
 }
