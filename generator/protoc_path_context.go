@@ -71,8 +71,8 @@ func (c *protocPathContext) MakePathArgs() []string {
     protoc_path_args := []string{
         "--proto_path=" + c.protoRoot,
     }
-    for _, import_path := range c.importPaths {
-        protoc_path_args = append(protoc_path_args, "--proto_path="+import_path)
+    for _, importPath := range c.importPaths {
+        protoc_path_args = append(protoc_path_args, "--proto_path="+importPath)
     }
     return protoc_path_args
 }

@@ -12,22 +12,22 @@ func newProtocGoOutParam() *protocGoOutParam {
     }
 }
 
-func (go_out *protocGoOutParam) addParam(param string) {
-    if !go_out.first {
-        go_out.params += ","
+func (o *protocGoOutParam) addParam(param string) {
+    if !o.first {
+        o.params += ","
     }
-    go_out.first = false
-    go_out.params += param
+    o.first = false
+    o.params += param
 }
 
-func (go_out *protocGoOutParam) setPath(path string) {
-    go_out.path = path
+func (o *protocGoOutParam) setPath(path string) {
+    o.path = path
 }
 
-func (go_out *protocGoOutParam) String() string {
-    if go_out.first {
-        return "--go_out=" + go_out.path
+func (o *protocGoOutParam) String() string {
+    if o.first {
+        return "--go_out=" + o.path
     } else {
-        return "--go_out=" + go_out.params + ":" + go_out.path
+        return "--go_out=" + o.params + ":" + o.path
     }
 }

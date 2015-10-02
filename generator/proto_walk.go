@@ -35,9 +35,9 @@ func walkProtoPackagesCustom(root, prefix string, walkFn walkProtoFunc) error {
 }
 
 func walkProtoPackages(root string, walkFn walkProtoFunc) error {
-    abs_root, err := filepath.Abs(root)
+    absRoot, err := filepath.Abs(root)
     if err != nil {
         return err
     }
-    return walkProtoPackagesCustom(abs_root, "", walkFn)
+    return walkProtoPackagesCustom(absRoot, "", walkFn)
 }

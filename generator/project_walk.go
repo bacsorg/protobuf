@@ -6,47 +6,46 @@ import (
     "os"
 )
 
-type walkProjectFunc func(root, import_path string, cfg *config.Config) error
+type walkProjectFunc func(root, importPath string, cfg *config.Config) error
 
 const (
-    not_done = iota
-    doing    = iota
-    done     = iota
+    notDone = iota
+    doing   = iota
+    done    = iota
 )
 
 func walkProtoProjectsCustom(
-    root, import_path string, state map[string]int,
-    walkFn walkProjectFunc) error {
+    root, importPath string, state map[string]int, walkFn walkProjectFunc) error {
 
-    if s, ok := state[import_path]; ok {
+    if s, ok := state[importPath]; ok {
         switch s {
-        case not_done:
-            state[import_path] = doing
+        case notDone:
+            state[importPath] = doing
         case doing:
-            return fmt.Errorf("cyclic dependency detected at \"%s\"", import_path)
+            return fmt.Errorf("cyclic dependency detected at \"%s\"", importPath)
         case done:
             return nil
         }
     } else {
-        state[import_path] = doing
+        state[importPath] = doing
     }
-    defer func() { state[import_path] = done }()
+    defer func() { state[importPath] = done }()
 
     cfg, err := config.ParseProject(root)
     if err != nil {
         return err
     }
     for _, dep := range cfg.Dependencies {
-        dep_path, err := findProjectInPath(dep)
+        depPath, err := findProjectInPath(dep)
         if err != nil {
             return err
         }
-        err = walkProtoProjectsCustom(dep_path, dep, state, walkFn)
+        err = walkProtoProjectsCustom(depPath, dep, state, walkFn)
         if err != nil {
             return err
         }
     }
-    return walkFn(root, import_path, cfg)
+    return walkFn(root, importPath, cfg)
 }
 
 func walkProtoProjectsFromCurrent(walkFn walkProjectFunc) error {
@@ -54,10 +53,10 @@ func walkProtoProjectsFromCurrent(walkFn walkProjectFunc) error {
     if err != nil {
         return err
     }
-    import_path, err := findImportPathForProject(root)
+    importPath, err := findImportPathForProject(root)
     if err != nil {
         return err
     }
     state := make(map[string]int)
-    return walkProtoProjectsCustom(root, import_path, state, walkFn)
+    return walkProtoProjectsCustom(root, importPath, state, walkFn)
 }

@@ -9,20 +9,20 @@ import (
 )
 
 func getGoPath() ([]string, error) {
-    gopath_env := os.Getenv("GOPATH")
-    if gopath_env == "" {
+    gopathEnv := os.Getenv("GOPATH")
+    if gopathEnv == "" {
         return nil, fmt.Errorf("GOPATH is not set")
     }
-    return filepath.SplitList(gopath_env), nil
+    return filepath.SplitList(gopathEnv), nil
 }
 
-func findProjectInPath(import_path string) (string, error) {
+func findProjectInPath(importPath string) (string, error) {
     gopaths, err := getGoPath()
     if err != nil {
         return "", err
     }
     for _, gopath := range gopaths {
-        project_path := path.Join(gopath, "src", import_path)
+        project_path := path.Join(gopath, "src", importPath)
         info, err := os.Stat(project_path)
         if err != nil {
             continue
@@ -32,7 +32,7 @@ func findProjectInPath(import_path string) (string, error) {
         }
         return project_path, nil
     }
-    return "", fmt.Errorf("unable to find \"%s\" in GOPATH", import_path)
+    return "", fmt.Errorf("unable to find \"%s\" in GOPATH", importPath)
 }
 
 func findImportPathForProject(project_path string) (string, error) {
