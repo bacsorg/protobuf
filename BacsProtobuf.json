@@ -1,0 +1,10 @@
+{
+    "Local": {
+        "Import": [
+            {
+                "Prefix": "/usr/include",
+                "Path": "google/protobuf"
+            }
+        ]
+    }
+}
