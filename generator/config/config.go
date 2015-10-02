@@ -14,6 +14,10 @@ type Config struct {
     Local struct {
         ProtoPrefix string
         GoPrefix    string
+        Import      []struct {
+            Prefix string
+            Path   string
+        }
     }
     Dependencies []string
 }

@@ -31,15 +31,25 @@ func Generate() error {
         func(root string, import_path string, cfg *config.Config) error {
             local_proto_root := path.Join(root, cfg.Local.ProtoPrefix)
             import_paths = append(import_paths, local_proto_root)
-            return walkProtoPackages(local_proto_root,
-                func(proto_root, prefix string, protos []string) error {
-                    full_import := path.Join(import_path, cfg.Local.GoPrefix, prefix)
-                    for _, proto := range protos {
-                        full_proto := path.Join(prefix, proto)
-                        import_map[full_proto] = full_import
-                    }
-                    return nil
-                })
+            import_walker := func(proto_root, prefix string, protos []string) error {
+                full_import := path.Join(import_path, cfg.Local.GoPrefix, prefix)
+                for _, proto := range protos {
+                    full_proto := path.Join(prefix, proto)
+                    import_map[full_proto] = full_import
+                }
+                return nil
+            }
+            err := walkProtoPackages(local_proto_root, import_walker)
+            if err != nil {
+                return err
+            }
+            for _, imp := range cfg.Local.Import {
+                err = walkProtoPackagesCustom(imp.Prefix, imp.Path, import_walker)
+                if err != nil {
+                    return err
+                }
+            }
+            return nil
         })
     if err != nil {
         return err
@@ -70,21 +80,31 @@ func Generate() error {
         protoc_go_out_param.addParam("M" + key + "=" + value)
     }
     protoc_go_out_param.setPath(go_root)
-    return walkProtoPackages(proto_root,
-        func(root string, prefix string, protos []string) error {
-            protoc_args := append([]string{
-                protoc_gen_go_param,
-                protoc_go_out_param.String(),
-            }, protoc_path_args...)
-            for _, proto := range protos {
-                protoc_args = append(protoc_args, path.Join(root, prefix, proto))
-            }
-            log.Printf("Generating protobufs for [%s] %s", root, prefix)
-            cmd := exec.Command(*protoc, protoc_args...)
-            output, err := cmd.CombinedOutput()
-            if err != nil {
-                return fmt.Errorf("protoc %v: %s", err, output)
-            }
-            return nil
-        })
+    proto_generator := func(root string, prefix string, protos []string) error {
+        protoc_args := append([]string{
+            protoc_gen_go_param,
+            protoc_go_out_param.String(),
+        }, protoc_path_args...)
+        for _, proto := range protos {
+            protoc_args = append(protoc_args, path.Join(root, prefix, proto))
+        }
+        log.Printf("Generating protobufs for [%s] %s", root, prefix)
+        cmd := exec.Command(*protoc, protoc_args...)
+        output, err := cmd.CombinedOutput()
+        if err != nil {
+            return fmt.Errorf("protoc %v: %s", err, output)
+        }
+        return nil
+    }
+    err = walkProtoPackages(proto_root, proto_generator)
+    if err != nil {
+        return err
+    }
+    for _, imp := range cfg.Local.Import {
+        err = walkProtoPackagesCustom(imp.Prefix, imp.Path, proto_generator)
+        if err != nil {
+            return err
+        }
+    }
+    return nil
 }
