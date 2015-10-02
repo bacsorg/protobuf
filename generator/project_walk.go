@@ -49,7 +49,7 @@ func walkProtoProjectsCustom(
     return walkFn(root, import_path, cfg)
 }
 
-func walkProtoProjects(walkFn walkProjectFunc) error {
+func walkProtoProjectsFromCurrent(walkFn walkProjectFunc) error {
     root, err := os.Getwd()
     if err != nil {
         return err
