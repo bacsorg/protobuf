@@ -2,8 +2,9 @@ package main
 
 import (
     "flag"
-    "github.com/bacsorg/protobuf/generator"
     "log"
+
+    "github.com/bacsorg/protobuf/generator"
 )
 
 func main() {

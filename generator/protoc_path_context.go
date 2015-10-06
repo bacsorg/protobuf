@@ -1,9 +1,10 @@
 package generator
 
 import (
-    "github.com/bacsorg/protobuf/generator/config"
     "os"
     "path"
+
+    "github.com/bacsorg/protobuf/generator/config"
 )
 
 type ProtocPathContext interface {

@@ -3,11 +3,12 @@ package generator
 import (
     "flag"
     "fmt"
-    "github.com/bacsorg/protobuf/generator/config"
     "log"
     "os"
     "os/exec"
     "path"
+
+    "github.com/bacsorg/protobuf/generator/config"
 )
 
 var protoc = flag.String("protoc", "protoc", "protoc location")

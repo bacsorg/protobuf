@@ -3,8 +3,9 @@ package generator
 import (
     "flag"
     "fmt"
-    "github.com/bacsorg/protobuf/generator/config"
     "os"
+
+    "github.com/bacsorg/protobuf/generator/config"
 )
 
 type walkProjectFunc func(root, importPath string, cfg *config.Config) error
