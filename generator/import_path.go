@@ -32,7 +32,7 @@ func findProjectInPath(importPath string) (string, error) {
         }
         return project_path, nil
     }
-    return "", fmt.Errorf("unable to find \"%s\" in GOPATH", importPath)
+    return "", fmt.Errorf("unable to find %q in GOPATH", importPath)
 }
 
 func findImportPathForProject(project_path string) (string, error) {
@@ -43,9 +43,9 @@ func findImportPathForProject(project_path string) (string, error) {
     for _, gopath := range gopaths {
         srcpath := path.Join(gopath, "src")
         if rel, err := filepath.Rel(srcpath, project_path); err == nil {
-            log.Printf("Found import path \"%s\" for project \"%s\"", rel, project_path)
+            log.Printf("Found import path %q for project %q", rel, project_path)
             return rel, nil
         }
     }
-    return "", fmt.Errorf("unable to find import path for project \"%s\"", project_path)
+    return "", fmt.Errorf("unable to find import path for project %q", project_path)
 }

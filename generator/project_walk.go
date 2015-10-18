@@ -29,7 +29,7 @@ func walkProtoProjectsCustom(
         case notDone:
             state[importPath] = doing
         case doing:
-            return fmt.Errorf("cyclic dependency detected at \"%s\"", importPath)
+            return fmt.Errorf("cyclic dependency detected at %q", importPath)
         case done:
             return nil
         }
