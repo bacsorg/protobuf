@@ -6,6 +6,7 @@ import (
     "os"
 
     "github.com/bacsorg/protobuf/generator/config"
+    "github.com/bunsanorg/buildutils"
 )
 
 type walkProjectFunc func(root, importPath string, cfg *config.Config) error
@@ -43,7 +44,7 @@ func walkProtoProjectsCustom(
         return err
     }
     for _, dep := range cfg.Dependencies {
-        depPath, err := findProjectInPath(dep)
+        depPath, err := buildutils.SrcDir(dep)
         if err != nil {
             return err
         }
@@ -60,13 +61,13 @@ func walkProtoProjectsFromCurrent(walkFn walkProjectFunc) error {
     if err != nil {
         return err
     }
-    importPath, err := findImportPathForProject(root)
+    importPath, err := buildutils.ImportPath(root)
     if err != nil {
         return err
     }
     state := make(map[string]int)
     if *dependOnBootstrapProject && importPath != *bootstrapProject {
-        bootstrapRoot, err := findProjectInPath(*bootstrapProject)
+        bootstrapRoot, err := buildutils.SrcDir(*bootstrapProject)
         if err != nil {
             return err
         }
