@@ -5,8 +5,8 @@ import (
     "fmt"
     "os"
 
-    "github.com/bacsorg/protobuf/generator/config"
     "github.com/bunsanorg/buildutils"
+    "github.com/bunsanorg/protoutils/generator/config"
 )
 
 type walkProjectFunc func(root, importPath string, cfg *config.Config) error
@@ -18,7 +18,7 @@ const (
 )
 
 var bootstrapProject = flag.String(
-    "bootstrap-project", "github.com/bacsorg/protobuf", "Project containing base types")
+    "bootstrap-project", "github.com/bunsanorg/protoutils", "Project containing base types")
 var dependOnBootstrapProject = flag.Bool(
     "depend-on-bootstrap-project", true, "Implicitly depend on bootstrap project")
 

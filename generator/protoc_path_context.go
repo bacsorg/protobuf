@@ -4,7 +4,7 @@ import (
     "os"
     "path"
 
-    "github.com/bacsorg/protobuf/generator/config"
+    "github.com/bunsanorg/protoutils/generator/config"
 )
 
 type ProtocPathContext interface {

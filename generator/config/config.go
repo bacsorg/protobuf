@@ -7,7 +7,7 @@ import (
     "path"
 )
 
-var ConfigFileName = flag.String("bacs-proto-config", "BacsProtobuf.json",
+var ConfigFileName = flag.String("proto-config", "BunsanProtogen.json",
     "Name of configuration file")
 
 type Config struct {

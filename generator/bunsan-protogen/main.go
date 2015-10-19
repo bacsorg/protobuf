@@ -4,7 +4,7 @@ import (
     "flag"
     "log"
 
-    "github.com/bacsorg/protobuf/generator"
+    "github.com/bunsanorg/protoutils/generator"
 )
 
 func main() {

@@ -8,7 +8,7 @@ import (
     "os/exec"
     "path"
 
-    "github.com/bacsorg/protobuf/generator/config"
+    "github.com/bunsanorg/protoutils/generator/config"
 )
 
 var protoc = flag.String("protoc", "protoc", "protoc location")
