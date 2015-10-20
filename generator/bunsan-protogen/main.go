@@ -1,16 +1,16 @@
 package main
 
 import (
-    "flag"
-    "log"
+	"flag"
+	"log"
 
-    "github.com/bunsanorg/protoutils/generator"
+	"github.com/bunsanorg/protoutils/generator"
 )
 
 func main() {
-    flag.Parse()
-    err := generator.Generate()
-    if err != nil {
-        log.Fatal(err)
-    }
+	flag.Parse()
+	err := generator.Generate()
+	if err != nil {
+		log.Fatal(err)
+	}
 }
