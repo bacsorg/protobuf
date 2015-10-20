@@ -27,7 +27,6 @@ func (o *protocGoOutParam) setPath(path string) {
 func (o *protocGoOutParam) String() string {
 	if o.first {
 		return "--go_out=" + o.path
-	} else {
-		return "--go_out=" + o.params + ":" + o.path
 	}
+	return "--go_out=" + o.params + ":" + o.path
 }
