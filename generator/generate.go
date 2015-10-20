@@ -12,9 +12,9 @@ import (
 )
 
 var protoc = flag.String("protoc", "protoc", "protoc location")
-var protoc_gen_go = flag.String(
+var protocGenGo = flag.String(
 	"protoc-gen-go", "protoc-gen-go", "protoc-gen-go location")
-var protoc_plugin_grpc = flag.Bool("protoc-plugin-grpc", true, "Enable gRPC")
+var protocPluginGrpc = flag.Bool("protoc-plugin-grpc", true, "Enable gRPC")
 
 type generator struct {
 	protocGenGoPath string
@@ -23,7 +23,7 @@ type generator struct {
 }
 
 func newGenerator(pathContext ProtocPathContext) (*generator, error) {
-	protocGenGoPath, err := exec.LookPath(*protoc_gen_go)
+	protocGenGoPath, err := exec.LookPath(*protocGenGo)
 	if err != nil {
 		return nil, err
 	}
@@ -34,24 +34,24 @@ func newGenerator(pathContext ProtocPathContext) (*generator, error) {
 }
 
 func (g *generator) walkImportProjects(
-	root, import_path string, cfg *config.Config) error {
+	root, importPath string, cfg *config.Config) error {
 
-	local_proto_root := path.Join(root, cfg.Local.ProtoPrefix)
-	g.pathContext.AddImportPath(local_proto_root)
-	import_walker := func(proto_root, prefix string, protos []string) error {
-		full_import := path.Join(import_path, cfg.Local.GoPrefix, prefix)
+	localProtoRoot := path.Join(root, cfg.Local.ProtoPrefix)
+	g.pathContext.AddImportPath(localProtoRoot)
+	importWalker := func(proto_root, prefix string, protos []string) error {
+		fullImport := path.Join(importPath, cfg.Local.GoPrefix, prefix)
 		for _, proto := range protos {
-			full_proto := path.Join(prefix, proto)
-			g.pathContext.RegisterProto(full_proto, full_import)
+			fullProto := path.Join(prefix, proto)
+			g.pathContext.RegisterProto(fullProto, fullImport)
 		}
 		return nil
 	}
-	err := walkProtoPackages(local_proto_root, import_walker)
+	err := walkProtoPackages(localProtoRoot, importWalker)
 	if err != nil {
 		return err
 	}
 	for _, imp := range cfg.Local.Import {
-		err = walkProtoPackagesCustom(imp.Prefix, imp.Path, import_walker)
+		err = walkProtoPackagesCustom(imp.Prefix, imp.Path, importWalker)
 		if err != nil {
 			return err
 		}

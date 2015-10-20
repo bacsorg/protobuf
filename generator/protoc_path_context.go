@@ -57,23 +57,23 @@ func (c *protocPathContext) GoRoot() string {
 }
 
 func (c *protocPathContext) MakeGoOutParam() string {
-	protoc_go_out_param := newProtocGoOutParam()
+	protocGoOutParam := newProtocGoOutParam()
 	if *protoc_plugin_grpc {
-		protoc_go_out_param.addParam("plugins=grpc")
+		protocGoOutParam.addParam("plugins=grpc")
 	}
 	for key, value := range c.importMap {
-		protoc_go_out_param.addParam("M" + key + "=" + value)
+		protocGoOutParam.addParam("M" + key + "=" + value)
 	}
-	protoc_go_out_param.setPath(c.goRoot)
-	return protoc_go_out_param.String()
+	protocGoOutParam.setPath(c.goRoot)
+	return protocGoOutParam.String()
 }
 
 func (c *protocPathContext) MakePathArgs() []string {
-	protoc_path_args := []string{
+	protocPathArgs := []string{
 		"--proto_path=" + c.protoRoot,
 	}
 	for _, importPath := range c.importPaths {
-		protoc_path_args = append(protoc_path_args, "--proto_path="+importPath)
+		protocPathArgs = append(protocPathArgs, "--proto_path="+importPath)
 	}
-	return protoc_path_args
+	return protocPathArgs
 }
